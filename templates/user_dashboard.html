@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: #333;
+            overflow: hidden;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 14px 20px;
+        }
+        .navbar a:hover {
+            background-color: #575757;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        select {
+            margin-left: 10px;
+        }
+        .profile-info {
+            display: none;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            top: 50px;
+            right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+  
+        <a href="/">Logout</a>
+        <a href="#" id="profile-btn">Profile</a>
+    </div>
+
+    <div class="profile-info" id="profile-info">
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <p><strong>Role:</strong> {{ user.role }}</p>
+    </div>
+
+    <div class="container">
+        <h2>Welcome to Your Dashboard</h2>
+
+        <form action="/dashboard/user" method="POST" enctype="multipart/form-data">
+            <input type="file" name="file" required>
+            <label for="access_type">Access:</label>
+            <select name="access_type" id="access_type">
+                <option value="private">Private</option>
+                <option value="public">Public</option>
+            </select>
+            <button type="submit">Upload</button>
+        </form>
+
+        <h2>Your Uploaded Files</h2>
+        <table>
+            <tr>
+                <th>Filename</th>
+                <th>Download Link</th>
+                <th>Access</th>
+                <th>Delete</th>
+            </tr>
+            {% for file in files %}
+            <tr>
+                <td>{{ file.filename }}</td>
+                <td><a href="{{ url_for('dashboard_bp.download_file', filename=file.filename) }}" download>Download</a></td>
+                <td>{{ file.access_type }}</td>
+                <td>
+                    <form action="{{ url_for('dashboard_bp.delete_file', file_id=file.id) }}" method="POST">
+                        <button type="submit" onclick="return confirm('Are you sure?')">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <script>
+        document.getElementById("profile-btn").addEventListener("click", function() {
+            var profileInfo = document.getElementById("profile-info");
+            profileInfo.style.display = profileInfo.style.display === "block" ? "none" : "block";
+        });
+
+        window.onload = function() {
+            var message = "{{ get_flashed_messages(category_filter=['success'])[0] if get_flashed_messages(category_filter=['success']) else '' }}";
+            if (message) {
+                alert(message);
+            }
+        }
+    </script>
+</body>
+</html>

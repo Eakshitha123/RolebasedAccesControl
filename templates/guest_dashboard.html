@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guest Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('dashboard_bp.guest_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('auth_bp.logout') }}">Logout</a>
+    </nav>
+
+    <div class="container">
+        <h2>Public Files</h2>
+        <ul>
+            {% for file in public_files %}
+                <li>
+                    {{ file.filename }}
+                    <a href="{{ url_for('file_bp.download_file', filename=file.filename) }}">Download</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
